@@ -1,4 +1,4 @@
-e <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,8 +6,8 @@ e <!DOCTYPE html>
     <title>Speech to Text - LectureMind AI</title>
     <meta name="description" content="Convert speech to text with our AI-powered speech recognition tool.">
     <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96">
-    <link rel="stylesheet" href="/styles/new.css">
-    <link rel="stylesheet" href="/styles/speech-to-text.css">
+    <link rel="stylesheet" href="styles/new.css?v=2">
+    <link rel="stylesheet" href="styles/speech-to-text.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
@@ -27,25 +27,62 @@ e <!DOCTYPE html>
     <div class="container">
         <div class="centered-div">
             <div class="header">
+                <div class="microphone-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="22"></line>
+                    </svg>
+                </div>
                 <h1>Speech to Text Converter</h1>
-                <p class="topic-input-cta">Convert your speech to text in real-time</p>
-                
+                <p class="topic-input-cta">Convert your speech to text in real-time with AI-powered recognition</p>
+
                 <div class="language-selection">
                     <div class="input-wrapper">
-                        <label for="select_language">Language:</label>
+                        <label for="select_language">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="2" y1="12" x2="22" y2="12"></line>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                            </svg>
+                            Language
+                        </label>
                         <select id="select_language"></select>
                     </div>
-                    
+
                     <div class="input-wrapper">
-                        <label for="select_dialect">Dialect:</label>
+                        <label for="select_dialect">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            Dialect
+                        </label>
                         <select id="select_dialect"></select>
                     </div>
                 </div>
 
                 <div class="controls">
-                    <button id="start" class="control-button start-button">Start Recognition</button>
-                    <button id="stop" class="control-button stop-button">Stop Recognition</button>
-                    <button id="clear" class="control-button clear-button">Clear Text</button>
+                    <button id="start" class="control-button start-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        Start Recognition
+                    </button>
+                    <button id="stop" class="control-button stop-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                            <rect x="6" y="4" width="4" height="16"></rect>
+                            <rect x="14" y="4" width="4" height="16"></rect>
+                        </svg>
+                        Stop Recognition
+                    </button>
+                    <button id="clear" class="control-button clear-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        Clear Text
+                    </button>
                 </div>
 
                 <div id="status" class="status-indicator" style="display: none;">
@@ -53,11 +90,20 @@ e <!DOCTYPE html>
                 </div>
 
                 <div class="transcript-container">
-                    <h3>Final Transcript:</h3>
-                    <div id="final" class="transcript final-transcript"></div>
+                    <h3>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 8px;">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        Final Transcript:
+                    </h3>
+                    <div id="final" class="transcript final-transcript">Your final transcript will appear here...</div>
                     
-                    <h3>Interim Transcript:</h3>
-                    <div id="interim" class="transcript interim-transcript"></div>
+                    <h3 style="display: none;">Interim Transcript:</h3>
+                    <div id="interim" class="transcript interim-transcript" style="display: none;"></div>
                 </div>
 
                 <div class="output-actions">

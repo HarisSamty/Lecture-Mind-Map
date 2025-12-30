@@ -7,8 +7,15 @@
     --error-color: #dc2626;
 }
 
-/* Removed external Open Sans font-face to avoid 404s for OpenSans-ExtraBold.ttf.
-   The UI will fall back to system fonts defined on body/text elements. */
+@font-face {
+    font-family: 'Open Sans';
+    src: url("/OpenSans-ExtraBold.ttf") format('truetype'), url("/OpenSans-ExtraBold.ttf") format('ttf');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
 
 body {
     margin: 0;

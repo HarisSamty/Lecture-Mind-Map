@@ -13,6 +13,14 @@ const upload = multer({ dest: 'uploads/' });
 // Creates a client
 const client = new speech.SpeechClient();
 
+// Serve static files from the current directory
+app.use(express.static(__dirname));
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
 // Enable CORS for all origins (adjust as needed)
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');

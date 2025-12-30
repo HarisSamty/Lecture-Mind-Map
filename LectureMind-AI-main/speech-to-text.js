@@ -1,68 +1,62 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Language settings
-    var langs =
-    [['Afrikaans',       ['af-ZA']],
-     ['Bahasa Indonesia',['id-ID']],
-     ['Bahasa Melayu',   ['ms-MY']],
-     ['Català',          ['ca-ES']],
-     ['Čeština',         ['cs-CZ']],
-     ['Deutsch',         ['de-DE']],
-     ['English',         ['en-AU', 'Australia'],
-                         ['en-CA', 'Canada'],
-                         ['en-IN', 'India'],
-                         ['en-NZ', 'New Zealand'],
-                         ['en-ZA', 'South Africa'],
-                         ['en-GB', 'United Kingdom'],
-                         ['en-US', 'United States']],
-     ['Español',         ['es-AR', 'Argentina'],
-                         ['es-BO', 'Bolivia'],
-                         ['es-CL', 'Chile'],
-                         ['es-CO', 'Colombia'],
-                         ['es-CR', 'Costa Rica'],
-                         ['es-EC', 'Ecuador'],
-                         ['es-SV', 'El Salvador'],
-                         ['es-ES', 'España'],
-                         ['es-US', 'Estados Unidos'],
-                         ['es-GT', 'Guatemala'],
-                         ['es-HN', 'Honduras'],
-                         ['es-MX', 'México'],
-                         ['es-NI', 'Nicaragua'],
-                         ['es-PA', 'Panamá'],
-                         ['es-PY', 'Paraguay'],
-                         ['es-PE', 'Perú'],
-                         ['es-PR', 'Puerto Rico'],
-                         ['es-DO', 'República Dominicana'],
-                         ['es-UY', 'Uruguay'],
-                         ['es-VE', 'Venezuela']],
-     ['Euskara',         ['eu-ES']],
-     ['Français',        ['fr-FR']],
-     ['Galego',          ['gl-ES']],
-     ['Hrvatski',        ['hr_HR']],
-     ['IsiZulu',         ['zu-ZA']],
-     ['Íslenska',        ['is-IS']],
-     ['Italiano',        ['it-IT', 'Italia'],
-                         ['it-CH', 'Svizzera']],
-     ['Magyar',          ['hu-HU']],
-     ['Nederlands',      ['nl-NL']],
-     ['Norsk bokmål',    ['nb-NO']],
-     ['Polski',          ['pl-PL']],
-     ['Português',       ['pt-BR', 'Brasil'],
-                         ['pt-PT', 'Portugal']],
-     ['Română',          ['ro-RO']],
-     ['Slovenčina',      ['sk-SK']],
-     ['Suomi',           ['fi-FI']],
-     ['Svenska',         ['sv-SE']],
-     ['Türkçe',          ['tr-TR']],
-     ['български',       ['bg-BG']],
-     ['Pусский',         ['ru-RU']],
-     ['Српски',          ['sr-RS']],
-     ['한국어',            ['ko-KR']],
-     ['中文',             ['cmn-Hans-CN', '普通话 (中国大陆)'],
-                         ['cmn-Hans-HK', '普通话 (香港)'],
-                         ['cmn-Hant-TW', '中文 (台灣)'],
-                         ['yue-Hant-HK', '粵語 (香港)']],
-     ['日本語',           ['ja-JP']],
-     ['Lingua latīna',   ['la']]];
+    // --- 1. THEME TOGGLE LOGIC ---
+    const body = document.body;
+    const themeToggle = document.querySelector('.theme-toggle') || document.getElementById('darkModeToggle');
+
+    // Load saved theme from browser storage
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        body.classList.add('dark-mode');
+    }
+
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            
+            // Save preference
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    }
+
+    // --- 2. LANGUAGE SETTINGS ---
+    var langs = [
+        ['Afrikaans',       ['af-ZA']],
+        ['Bahasa Indonesia',['id-ID']],
+        ['Bahasa Melayu',   ['ms-MY']],
+        ['Català',          ['ca-ES']],
+        ['Čeština',         ['cs-CZ']],
+        ['Deutsch',         ['de-DE']],
+        ['English',         ['en-AU', 'Australia'], ['en-CA', 'Canada'], ['en-IN', 'India'], ['en-NZ', 'New Zealand'], ['en-ZA', 'South Africa'], ['en-GB', 'United Kingdom'], ['en-US', 'United States']],
+        ['Español',         ['es-AR', 'Argentina'], ['es-BO', 'Bolivia'], ['es-CL', 'Chile'], ['es-CO', 'Colombia'], ['es-CR', 'Costa Rica'], ['es-EC', 'Ecuador'], ['es-SV', 'El Salvador'], ['es-ES', 'España'], ['es-US', 'Estados Unidos'], ['es-GT', 'Guatemala'], ['es-HN', 'Honduras'], ['es-MX', 'México'], ['es-NI', 'Nicaragua'], ['es-PA', 'Panamá'], ['es-PY', 'Paraguay'], ['es-PE', 'Perú'], ['es-PR', 'Puerto Rico'], ['es-DO', 'República Dominicana'], ['es-UY', 'Uruguay'], ['es-VE', 'Venezuela']],
+        ['Euskara',         ['eu-ES']],
+        ['Français',        ['fr-FR']],
+        ['Galego',          ['gl-ES']],
+        ['Hrvatski',        ['hr_HR']],
+        ['IsiZulu',         ['zu-ZA']],
+        ['Íslenska',        ['is-IS']],
+        ['Italiano',        ['it-IT', 'Italia'], ['it-CH', 'Svizzera']],
+        ['Magyar',          ['hu-HU']],
+        ['Nederlands',      ['nl-NL']],
+        ['Norsk bokmål',    ['nb-NO']],
+        ['Polski',          ['pl-PL']],
+        ['Português',       ['pt-BR', 'Brasil'], ['pt-PT', 'Portugal']],
+        ['Română',          ['ro-RO']],
+        ['Slovenčina',      ['sk-SK']],
+        ['Suomi',           ['fi-FI']],
+        ['Svenska',         ['sv-SE']],
+        ['Türkçe',          ['tr-TR']],
+        ['български',       ['bg-BG']],
+        ['Pусский',         ['ru-RU']],
+        ['Српски',          ['sr-RS']],
+        ['한국어',            ['ko-KR']],
+        ['中文',             ['cmn-Hans-CN', '普通话 (中国大陆)'], ['cmn-Hans-HK', '普通话 (香港)'], ['cmn-Hant-TW', '中文 (台灣)'], ['yue-Hant-HK', '粵語 (香港)']],
+        ['日本語',           ['ja-JP']],
+        ['Lingua latīna',   ['la']]
+    ];
 
     let select_language = document.querySelector('#select_language');
     let select_dialect = document.querySelector('#select_dialect');
@@ -88,43 +82,39 @@ document.addEventListener('DOMContentLoaded', function() {
         select_dialect.style.visibility = list[1].length == 1 ? 'hidden' : 'visible';
     }
 
-    // Update dialects when language changes
-    select_language.addEventListener('change', function() {
-        updateCountry();
-    });
+    select_language.addEventListener('change', updateCountry);
 
-    // Speech recognition functionality
+    // --- 3. SPEECH RECOGNITION ---
     let speechRecognition;
     let final_transcript = "";
     
-    if ("webkitSpeechRecognition" in window) {
-        speechRecognition = new webkitSpeechRecognition();
+    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        speechRecognition = new SpeechRecognition();
         
         speechRecognition.continuous = true;
         speechRecognition.interimResults = true;
         
         speechRecognition.onstart = () => {
-            document.querySelector("#status").style.display = "block";
+            document.querySelector("#status").style.display = "flex";
             document.querySelector("#start").disabled = true;
             document.querySelector("#stop").disabled = false;
         };
         
         speechRecognition.onerror = (event) => {
             document.querySelector("#status").style.display = "none";
-            console.log("Speech Recognition Error: " + event.error);
+            console.error("Speech Recognition Error: " + event.error);
             document.querySelector("#start").disabled = false;
             document.querySelector("#stop").disabled = true;
         };
         
         speechRecognition.onend = () => {
             document.querySelector("#status").style.display = "none";
-            console.log("Speech Recognition Ended");
             document.querySelector("#start").disabled = false;
             document.querySelector("#stop").disabled = true;
             
-            // Automatically generate mind map when speech recognition ends
             if (final_transcript.trim() !== "") {
-                // Redirect to new.html with the transcript as a query parameter
+                // Auto-redirect to generate map
                 window.location.href = "/new.html?q=" + encodeURIComponent(final_transcript.trim());
             }
         };
@@ -139,23 +129,28 @@ document.addEventListener('DOMContentLoaded', function() {
                     interim_transcript += event.results[i][0].transcript;
                 }
             }
-            document.querySelector("#final").innerHTML = final_transcript;
-            document.querySelector("#interim").innerHTML = interim_transcript;
             
-            // Show generate mind map button when there's content
+            const finalElement = document.querySelector("#final");
+            const interimElement = document.querySelector("#interim");
+            
             if (final_transcript.trim() !== "") {
-                document.querySelector("#generate-mindmap").style.display = "inline-block";
+                finalElement.textContent = final_transcript;
+                finalElement.style.color = "#166534";
+                finalElement.style.opacity = "1";
+            }
+            
+            interimElement.textContent = interim_transcript;
+            
+            if (final_transcript.trim() !== "") {
+                document.querySelector("#generate-mindmap")?.style.setProperty('display', 'inline-block');
             }
         };
     } else {
-        // Fallback for browsers that don't support speech recognition
         document.querySelector("#start").disabled = true;
-        document.querySelector("#stop").disabled = true;
-        console.log("Speech Recognition Not Available");
-        alert("Speech recognition is not supported in your browser. Please try Chrome or Edge.");
+        alert("Speech recognition is not supported in your browser. Please use Chrome.");
     }
 
-    // Event listeners for buttons
+    // --- 4. BUTTON EVENT LISTENERS ---
     document.querySelector("#start").onclick = () => {
         if (speechRecognition) {
             speechRecognition.lang = document.querySelector("#select_dialect").value;
@@ -164,73 +159,34 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     document.querySelector("#stop").onclick = () => {
-        if (speechRecognition) {
-            speechRecognition.stop();
-        }
+        if (speechRecognition) speechRecognition.stop();
     };
-    
-    // Add auto-start functionality for mind map generation
-    // (Button functionality removed as mind map is now auto-generated on speech end)
-    const generateMindmapBtn = document.querySelector("#generate-mindmap");
-    if (generateMindmapBtn) {
-        generateMindmapBtn.style.display = "none";
-    }
-    
-    // Auto-start speech recognition when page loads (optional feature)
-    // Uncomment the following lines if you want to auto-start recording on page load
-    /*
-    setTimeout(() => {
-        if (speechRecognition) {
-            speechRecognition.lang = document.querySelector("#select_dialect").value;
-            speechRecognition.start();
-        }
-    }, 1000);
-    */
-    
+
     document.querySelector("#clear").onclick = () => {
         final_transcript = "";
-        document.querySelector("#final").innerHTML = "";
-        document.querySelector("#interim").innerHTML = "";
-        document.querySelector("#generate-mindmap").style.display = "none";
+        const finalElement = document.querySelector("#final");
+        finalElement.textContent = "Your final transcript will appear here...";
+        finalElement.style.color = "#86efac";
+        finalElement.style.opacity = "0.7";
+        document.querySelector("#interim").textContent = "";
     };
     
     document.querySelector("#copy").onclick = () => {
-        const textToCopy = document.querySelector("#final").innerText;
-        if (textToCopy) {
-            navigator.clipboard.writeText(textToCopy)
-                .then(() => {
-                    alert("Text copied to clipboard!");
-                })
-                .catch(err => {
-                    console.error('Failed to copy text: ', err);
-                    // Fallback for older browsers
-                    const textArea = document.createElement("textarea");
-                    textArea.value = textToCopy;
-                    document.body.appendChild(textArea);
-                    textArea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textArea);
-                    alert("Text copied to clipboard!");
-                });
-        } else {
-            alert("No text to copy!");
+        const text = document.querySelector("#final").innerText;
+        if (text) {
+            navigator.clipboard.writeText(text).then(() => alert("Copied!"));
         }
     };
     
     document.querySelector("#download").onclick = () => {
-        const textToDownload = document.querySelector("#final").innerText;
-        if (textToDownload) {
-            const blob = new Blob([textToDownload], { type: 'text/plain' });
+        const text = document.querySelector("#final").innerText;
+        if (text) {
+            const blob = new Blob([text], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'speech-to-text.txt';
-            document.body.appendChild(a);
+            a.download = 'transcript.txt';
             a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        } else {
-            alert("No text to download!");
         }
     };
 });

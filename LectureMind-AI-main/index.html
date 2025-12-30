@@ -28,11 +28,9 @@
             content="Create infinite Mind Maps using AI. Totally free! Just type in a topic to create mind maps easily. That’s it! You’ll get your mind map instantly. It’s free and no sign-up needed.">
         <meta name="twitter:image" content="/img/meta-img.jpg">
 
-        <link rel="icon" type="image/png" href="/favicon/favicon-16x16.png" sizes="16x16">
-        <link rel="icon" type="image/png" href="/favicon/favicon-32x32.png" sizes="32x32">
-        <link rel="icon" type="image/png" href="/favicon/favicon-48x48.png" sizes="48x48">
-        <link rel="icon" type="image/png" href="/favicon/favicon-64x64.png" sizes="64x64">
         <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96">
+        <link rel="icon" href="/favicon/favicon.ico">
+        <link rel="icon" href="/favicon/favicon.svg" type="image/svg+xml">
         <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png">
 
         <meta name="mobile-web-app-capable" content="yes">
@@ -40,7 +38,6 @@
 
         <link rel="canonical" href="https://mindmapLectureMind.com/" />
 
-        <link href="/OpenSans-ExtraBold.ttf" rel="stylesheet">
         <link rel="stylesheet" href="/styles/index.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
@@ -105,7 +102,7 @@
                         id="prompt"
                         class="input"
                         placeholder="Enter your topic..."/>
-                    <button onclick="generateMindmap('mindmapTopic')" class="send-prompt-btn" style="background: linear-gradient(90deg, #1D3C78, #2851A3); border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer;">
+                    <button onclick="generateMindmap('mindmapTopic')" class="send-prompt-btn">
                         <svg xmlns="http://www.w3.org/2000/svg" height="26px" viewBox="0 -960 960 960" width="26px" fill="#FFFFFF"><path d="M166.67-179.67Q150-173 135-182.5T120-210v-193.33L428-480l-308-78v-192q0-18 15-27.5t31.67-2.83l640 269.33Q827-502 827-480t-20.33 31l-640 269.33Z"/></svg>
                     </button>
                 </div>
@@ -119,14 +116,7 @@
                         </svg>
                         <span class="manual-text">Speech to Text</span>
                     </a>
-                    
-                    <!-- Audio Upload Button -->
-                    <button id="audioInputBtn" class="manual-btn" data-tooltip="Upload audio file" onclick="window.location.href='/audio-to-mindmap.html'">
-                        <img src="audio-emoji.svg" width="20" height="20" style="margin-right: 10px;" />
-                        <span class="manual-text">Upload Audio</span>
-                    </button>
-                    <input type="file" id="audioInput" accept="audio/*" style="display:none" />
-                    
+
                     <!-- Manual Input Button -->
                     <a href="/edit.html?id=new" class="manual-btn">
                         <svg
@@ -670,32 +660,12 @@
                     <a href="https://www.linkedin.com/in/muhammad-haris-samty/" target="_blank" class="icon-link" aria-label="Follow Muhammad Haris on LinkedIn">
                         <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect width="4" height="12" x="2" y="9" stroke="white" stroke-width="2"/><circle cx="4" cy="4" r="2" stroke="white" stroke-width="2"/></svg>
                     </a>
-                    <a href="https://github.com/HarisSamty/Lecture-Mind-Map" target="_blank" class="icon-link" aria-label="View Source on GitHub">
-                        <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </a>
                 </div>
             </div>
         </div>
     </footer>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-      const audioInput = document.getElementById('audioInput');
-      const audioInputBtn = document.getElementById('audioInputBtn');
-      audioInputBtn.addEventListener('click', function() {
-        audioInput.click();
-      });
-      audioInput.addEventListener('change', function() {
-        const file = audioInput.files[0];
-        if (file) {
-          // Handle the audio file here
-          console.log('Selected audio file:', file);
-          // For example, you can upload the file or process it as needed
-          alert(`Selected audio file: ${file.name}`);
-        }
-      });
-    });
-  
     function generateMindmap() {
       console.log("generateMindmap called");
       const query = document.getElementById('prompt').value;

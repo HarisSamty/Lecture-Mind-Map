@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  lecturemind-ai:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lecturemind-ai
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - NODE_ENV=production
+      # Uncomment and set if using Google Cloud Speech-to-Text
+      # - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json
+      # - GOOGLE_CLOUD_PROJECT=your-project-id
+    volumes:
+      # Mount uploads directory to persist uploaded files (optional)
+      - ./uploads:/app/uploads
+      # Mount credentials file if using Google Cloud (optional)
+      # - ./path/to/credentials.json:/app/credentials.json:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3001/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+

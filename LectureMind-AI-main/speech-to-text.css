@@ -1,0 +1,228 @@
+/* =========================================
+   1. THEME VARIABLES (Light & Dark)
+   ========================================= */
+   :root {
+    /* Light Mode (Default) */
+    --bg-color: #ffffff;
+    --card-bg: #ffffff;
+    --selection-box-bg: #f8fafc; /* Subtle blue-gray for the input group */
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --nav-logo: #1e293b;
+    --input-border: #e2e8f0;
+    --input-bg: #ffffff;
+    --card-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+}
+
+body.dark-mode {
+    /* Dark Mode - Blue Gradient Background */
+    --bg-color: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #1e293b 100%);
+    --card-bg: #ffffff; /* Keeping the card white as per your screenshots */
+    --selection-box-bg: #f1f5f9;
+    --text-primary: #1e293b;
+    --nav-logo: #ffffff;
+    --card-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+/* =========================================
+   2. GLOBAL STYLES
+   ========================================= */
+body {
+    background: var(--bg-color) !important;
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    transition: background 0.4s ease;
+}
+
+.container {
+    max-width: 960px;
+    margin: 40px auto 80px;
+    padding: 0 16px;
+}
+
+.centered-div {
+    display: flex;
+    justify-content: center;
+}
+
+/* =========================================
+   3. MAIN HEADER CARD
+   ========================================= */
+.header {
+    width: 100%;
+    max-width: 850px;
+    background: var(--card-bg);
+    border-radius: 24px;
+    padding: 48px 40px 40px;
+    box-shadow: var(--card-shadow);
+    position: relative;
+    text-align: center;
+}
+
+.microphone-icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 28px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+    color: white;
+}
+
+.header h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.topic-input-cta {
+    margin-bottom: 32px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* =========================================
+   4. NEW LANGUAGE SELECTION (IMAGE STYLE)
+   ========================================= */
+.language-selection {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    margin: 0 0 32px;
+    justify-content: center;
+    flex-wrap: wrap;
+    background: var(--selection-box-bg); /* Grouping background */
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid var(--input-border);
+}
+
+.language-selection .input-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
+    min-width: 200px;
+    max-width: 350px;
+}
+
+.language-selection label {
+    margin-bottom: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #1e3a8a; /* Navy blue color for labels */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.language-selection select {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--input-border);
+    background-color: var(--input-bg);
+    font-size: 0.95rem;
+    color: #334155;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    /* Custom Dropdown Arrow */
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231e3a8a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 14px;
+}
+
+.language-selection select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* =========================================
+   5. CONTROLS & TRANSCRIPT
+   ========================================= */
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin: 8px 0 20px;
+    flex-wrap: wrap;
+}
+
+.control-button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: white;
+    transition: transform 0.1s ease, opacity 0.2s;
+}
+
+.control-button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    filter: brightness(1.1);
+}
+
+.start-button { background: linear-gradient(135deg, #22c55e, #16a34a); }
+.stop-button { background: linear-gradient(135deg, #ef4444, #dc2626); }
+.clear-button { background: linear-gradient(135deg, #f97316, #ea580c); }
+
+.transcript {
+    min-height: 150px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #1e293b;
+    text-align: left;
+}
+
+.final-transcript {
+    background: #f0fdf4;
+    border-color: #86efac;
+    color: #166534;
+}
+
+/* =========================================
+   6. NAVBAR
+   ========================================= */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+}
+
+.navbar .logo-text {
+    color: var(--nav-logo);
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.nav-links a {
+    background-color: #1D3C78;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 999px;
+    text-decoration: none;
+}
+
+/* =========================================
+   7. RESPONSIVE
+   ========================================= */
+@media (max-width: 768px) {
+    .header { padding: 30px 20px; }
+    .language-selection { flex-direction: column; padding: 16px; }
+    .language-selection .input-wrapper { max-width: 100%; }
+}

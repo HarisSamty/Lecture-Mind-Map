@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('prompt')?.focus();
 
   // initializeYouTubeFeatures(); // Disabled YouTube features
-  initializeAudioInputFeatures(); // Added audio input features
   initializeDownloadFeatures();
   initializeEditMode();
   initializeKeyboardShortcuts();
@@ -26,27 +25,6 @@ document.addEventListener('DOMContentLoaded', function () {
       window.location.search;
   }
 });
-
-function initializeAudioInputFeatures() {
-  const audioInputBtn = document.getElementById('audioInputBtnNew');
-  const audioInput = document.getElementById('audioInputNew');
-
-  if (!audioInputBtn || !audioInput) return;
-
-  audioInputBtn.addEventListener('click', () => {
-    audioInput.click();
-  });
-
-  audioInput.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      // Process the audio file here
-      console.log('Audio file selected:', file.name);
-      // You can add your audio processing logic here
-      alert(`Audio file "${file.name}" selected. Processing not implemented.`);
-    }
-  });
-}
 
 function initializeKeyboardShortcuts() {
   document.addEventListener('keydown', function (e) {
@@ -513,23 +491,40 @@ async function generateMindmap(mindmapTopic, isRegenerate = false) {
     if (mindmapElem) mindmapElem.style.display = 'block';
 
     // Call Pollinations AI directly to lower costs
-    const systemPrompt = `You are a helpful assistant that generates well-structured mind maps. Please generate a Mind Map as Markdown text. It could look like this:
-            
-            # Matching Mind Map Title
-            ## Branch 1
-            ### Sub Branch A
-            ### Sub Branch B
-            ## Branch 2
-            
-            Every text must be aligned to a specific level using the level-specific amount of #s. If a level doesn't have a # at the start, it's wrong. If you make very large enumerations with more than 6 points, not every object needs a new branch, otherwise, the mind map will be too high. In such cases, simply make one branch with a comma-separated enumeration.
-            
-            Structure your response exactly like this: 
-            topic="{Here you formulate a good mind map title}", 
-            markdown="{Your generated markdown Mind Map}". 
-            
-            Avoid standard structures like Overview or Conclusion. It's a mind map! Additionally, the mind map should go beyond simple category labels such as "Education" or "Examples". It must include specific details, such as relevant facts about their educational background (only in the case of a mind map about a person, of course! This was an example). 
-            
-            Complete with facts, not just the basic starting point. If there's too much content for a mind map, you can also shorten and go more general, but only if really necessary. Aim for 2-3 levels deep. The mind map shouldn't be overwhelming! The mind map must be about: ${mindmapTopic}`;
+    const systemPrompt = `You are an expert academic tutor and researcher dedicated to providing accurate, factual information. Generate a well-structured mind map as Markdown text about the topic: "${mindmapTopic}".
+
+CRITICAL INSTRUCTIONS FOR ACCURACY:
+1. Verify all facts, dates, names, and figures before including them.
+2. Do not hallucinate or invent information. If a detail is uncertain, omit it.
+3. Focus on key concepts, accurate historical events, and verified data.
+4. Ensure the hierarchy makes logical sense (General -> Specific).
+
+FORMATTING RULES:
+- Use Markdown headers (#, ##, ###) for hierarchy.
+- Alignment is crucial: Every item must start with the correct number of #s.
+- If a list has >6 items, group them in a single branch with commas to save vertical space.
+- Do NOT include "Overview", "Introduction", or "Conclusion" branches.
+
+OUTPUT STRUCTURE:
+You MUST structure your response exactly like this (do not use JSON, use this custom format):
+topic="{A clear, accurate title}", 
+markdown="{The Markdown content}"
+
+CONTENT GUIDELINES:
+- Go beyond generic labels. Instead of "Education", use "PhD in Physics from MIT (1995)".
+- Depth: Aim for 2-3 levels.
+- Tone: Educational, precise, and professional.
+
+Example of expected Markdown content:
+# World War I
+## Causes
+### Alliances (Triple Entente vs Triple Alliance)
+### Assassination of Archduke Franz Ferdinand (1914)
+## Major Fronts
+### Western Front (Trench Warfare)
+### Eastern Front
+
+Now, generate the mind map for: ${mindmapTopic}`;
 
     const pollinationsResponse = await fetch('https://text.pollinations.ai/openai', {
       method: 'POST',
