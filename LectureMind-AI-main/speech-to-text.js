@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ['Suomi',           ['fi-FI']],
         ['Svenska',         ['sv-SE']],
         ['Türkçe',          ['tr-TR']],
+        ['اردو',            ['ur-PK']],
         ['български',       ['bg-BG']],
         ['Pусский',         ['ru-RU']],
         ['Српски',          ['sr-RS']],
