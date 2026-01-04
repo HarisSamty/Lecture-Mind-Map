@@ -461,6 +461,7 @@ async function generateMindmap(mindmapTopic, isRegenerate = false) {
   if (!mindmapTopic) return;
 
   try {
+    // --- 1. UI RESET LOGIC (Standard UI cleanup) ---
     if (!isRegenerate) {
       const headerElem = document.getElementById('header');
       if (headerElem) headerElem.style.display = 'none';
@@ -474,7 +475,7 @@ async function generateMindmap(mindmapTopic, isRegenerate = false) {
       const mindmapElem = document.getElementById('mindmap');
       if (mindmapElem) mindmapElem.style.display = 'none';
 
-      localStorage.setItem('lastMindmapInput', mindmapTopic); // Store initial user input
+      localStorage.setItem('lastMindmapInput', mindmapTopic); 
     }
 
     const loadingElem = document.getElementById('loading-animation');
@@ -490,216 +491,146 @@ async function generateMindmap(mindmapTopic, isRegenerate = false) {
     const mindmapElem = document.getElementById('mindmap');
     if (mindmapElem) mindmapElem.style.display = 'block';
 
-    // Call Pollinations AI directly to lower costs
-    const systemPrompt = `You are an expert academic tutor and researcher dedicated to providing accurate, factual information. Generate a well-structured mind map as Markdown text about the topic: "${mindmapTopic}".
+    // --- 2. SYSTEM PROMPT (Defines how the AI should behave) ---
+    const systemPrompt = `You are an expert academic tutor. Generate a well-structured mind map as Markdown text about: "${mindmapTopic}".
 
-CRITICAL INSTRUCTIONS FOR ACCURACY:
-1. Verify all facts, dates, names, and figures before including them.
-2. Do not hallucinate or invent information. If a detail is uncertain, omit it.
-3. Focus on key concepts, accurate historical events, and verified data.
-4. Ensure the hierarchy makes logical sense (General -> Specific).
+CRITICAL RULES:
+1. Output ONLY valid Markdown.
+2. Use # for the Central Topic.
+3. Use ##, ### for branches.
+4. Do NOT use code blocks or JSON.
+5. Keep it concise and educational.
 
-FORMATTING RULES:
-- Use Markdown headers (#, ##, ###) for hierarchy.
-- Alignment is crucial: Every item must start with the correct number of #s.
-- If a list has >6 items, group them in a single branch with commas to save vertical space.
-- Do NOT include "Overview", "Introduction", or "Conclusion" branches.
+Example Output:
+# Artificial Intelligence
+## Types
+### Narrow AI
+### General AI
+## Applications
+### Healthcare
+### Finance
 
-OUTPUT STRUCTURE:
-You MUST structure your response exactly like this (do not use JSON, use this custom format):
-topic="{A clear, accurate title}", 
-markdown="{The Markdown content}"
+Now generate for: ${mindmapTopic}`;
 
-CONTENT GUIDELINES:
-- Go beyond generic labels. Instead of "Education", use "PhD in Physics from MIT (1995)".
-- Depth: Aim for 2-3 levels.
-- Tone: Educational, precise, and professional.
+    // --- 3. GOOGLE GEMINI API LOGIC (PROXY PRIORITY) ---
+    
+    let aiResponse = '';
 
-Example of expected Markdown content:
-# World War I
-## Causes
-### Alliances (Triple Entente vs Triple Alliance)
-### Assassination of Archduke Franz Ferdinand (1914)
-## Major Fronts
-### Western Front (Trench Warfare)
-### Eastern Front
-
-Now, generate the mind map for: ${mindmapTopic}`;
-
-    const pollinationsResponse = await fetch('https://text.pollinations.ai/openai', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'openai',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: mindmapTopic },
-        ],
-      }),
-    });
-
-    if (!pollinationsResponse.ok) {
-      let errorMsg = `Server responded with ${pollinationsResponse.status}`;
-      try {
-        const errorData = await pollinationsResponse.json();
-        errorMsg = errorData.error || errorMsg;
-      } catch (jsonError) {
-        console.error('Error parsing error JSON:', jsonError);
-      }
-      throw new Error(`AI error: ${errorMsg}`);
-    }
-
-    const data = await pollinationsResponse.json();
-
-    // Analytics tracking - Fire and forget
+    // Attempt 1: Try Local Backend Proxy (http://localhost:3001)
+    // This avoids CORS and API Key restrictions that might block client-side calls.
     try {
-      await fetch('https://abacus.jasoncameron.dev/hit/mindmapLectureMind.com/mind-map-generated', {
-        method: 'GET',
-      });
-    } catch (trackingError) {
-      console.error('Tracking Error:', trackingError);
+        console.log('Attempting to use local backend proxy...');
+        const proxyResponse = await fetch('http://localhost:3001/api/generate-mindmap', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt: systemPrompt })
+        });
+
+        if (proxyResponse.ok) {
+            const data = await proxyResponse.json();
+            aiResponse = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+            if (aiResponse) console.log('Successfully generated using backend proxy.');
+        } else {
+            console.warn('Backend proxy returned error. Server might be reachable but failing.');
+        }
+    } catch (e) {
+        console.warn('Backend proxy unreachable. server.js might not be running. Falling back to direct API.', e);
     }
 
-    let topic = '';
-    let markdown = '';
-
-    const aiResponse =
-      data?.choices?.[0]?.message?.content ??
-      data.content ??
-      data.response ??
-      '';
-
+    // Attempt 2: Direct Client-Side API Call (Fallback)
     if (!aiResponse) {
-      throw new Error('Empty AI response');
+        console.log('Falling back to direct client-side API call...');
+        const API_KEY = 'AIzaSyBb3fx68dd4V70szsUN63uoDBWCFr3MqDc'; 
+        
+        // List of models to try in order of preference
+        const models = [
+            'gemini-2.5-flash',
+            'gemini-2.5-pro',
+            'gemini-2.0-flash',
+            'gemini-flash-latest',
+            'gemini-pro-latest'
+        ];
+
+        let lastError = null;
+
+        for (const model of models) {
+            try {
+                console.log(`Attempting to generate mindmap using model: ${model}`);
+                const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`;
+
+                const geminiResponse = await fetch(geminiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{ text: systemPrompt }]
+                        }]
+                    }),
+                });
+
+                if (!geminiResponse.ok) {
+                    const errorData = await geminiResponse.json().catch(() => ({}));
+                    const errorMsg = errorData.error?.message || geminiResponse.statusText;
+                    console.warn(`Model ${model} failed: ${errorMsg}`);
+                    lastError = new Error(`Gemini API Error (${model}): ${errorMsg}`);
+                    continue; 
+                }
+
+                const data = await geminiResponse.json();
+                aiResponse = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+                if (aiResponse) {
+                    console.log(`Successfully generated using model: ${model}`);
+                    break; 
+                }
+            } catch (e) {
+                console.warn(`Error with model ${model}:`, e);
+                lastError = e;
+            }
+        }
+        
+        if (!aiResponse) {
+            throw lastError || new Error('All Gemini models failed to respond. Please ensure server.js is running for better reliability.');
+        }
     }
 
+    // --- 4. CLEANING & RENDERING LOGIC ---
     const cleanedResponse = aiResponse
       .replace(/^```(?:markdown|json)?\n?/gm, '')
       .replace(/\n```$/gm, '')
-      .replace(/`/g, '')
       .trim();
 
-    // Try standard format first
-    const standardMatch = cleanedResponse.match(
-      /topic\s*=\s*"([^"]*)"\s*,\s*markdown\s*=\s*"([\s\S]*?)"\s*/i,
-    );
-
-    if (standardMatch) {
-      [, topic, markdown] = standardMatch;
-      markdown = markdown.replace(/\\"/g, '"');
-    } else {
-      // Try alternative format
-      const altMatch = cleanedResponse.match(
-        /(?:topic|title)\s*[:=]\s*"?([^"\n]+)"?[\s\S]*?(?:markdown|content)\s*[:=]\s*([\s\S]+)/i,
-      );
-
-      if (altMatch) {
-        [, topic, markdown] = altMatch;
-        markdown = markdown.replace(/^["']|["']$/g, '').trim();
-      } else {
-        // Try JSON parsing
-        try {
-          if (
-            cleanedResponse.trim().startsWith('{') &&
-            cleanedResponse.trim().endsWith('}')
-          ) {
-            const jsonData = JSON.parse(cleanedResponse);
-            if (jsonData.topic && jsonData.markdown) {
-              topic = jsonData.topic;
-              markdown = jsonData.markdown;
-            }
-          }
-        } catch (jsonError) {
-          console.error('JSON parsing error:', jsonError);
-        }
-
-        // Fallback
-        if (!topic || !markdown) {
-          console.log('Falling back to full response parsing');
-          topic = mindmapTopic;
-          markdown = cleanedResponse;
-        }
-      }
+    // Basic Markdown formatting to ensure it has a Title
+    let markdown = cleanedResponse;
+    if (!markdown.startsWith('#')) {
+        markdown = `# ${mindmapTopic}\n${markdown}`;
     }
 
-    // Clean and format markdown - same logic as backend
-    markdown = markdown.replace(/^\s*[-*]\s*/gm, '').replace(/\n{3,}/g, '\n\n');
+    // Render the map using your existing render function
+    renderMindmap(markdown);
+    
+    // Save to history
+    saveMindmapToHistory(mindmapTopic, markdown);
+    currentMindmapTitle = mindmapTopic;
 
-    let cleanedMarkdown = markdown
-      .replace(/\\n/g, '\n')
-      .replace(/^\s*#/gm, '#')
-      .replace(/\s{2,}/g, ' ');
-
-    const hashIndex = cleanedMarkdown.indexOf('#');
-    if (hashIndex > 0) {
-      cleanedMarkdown = cleanedMarkdown.substring(hashIndex);
-    }
-
-    cleanedMarkdown = cleanedMarkdown
-      .split('\n')
-      .map((line) => {
-        const trimmedLine = line.trim();
-        if (!trimmedLine) return '';
-        if (
-          trimmedLine.startsWith('#') ||
-          trimmedLine.startsWith('-') ||
-          /^\d+\./.test(trimmedLine)
-        ) {
-          return line;
-        }
-        return `- ${trimmedLine}`;
-      })
-      .join('\n');
-
-    const formattedMarkdown = cleanedMarkdown.split('\n').map((line) => line.trim()).join('\n');
-
-    // Use the formatMarkdown function (assuming it exists in your frontend)
-    const responseData = {
-      topic: topic,
-      raw: formattedMarkdown,
-    };
-
-    const { topic: finalTopic, markdown: finalMarkdown } =
-      formatMarkdown(responseData);
-
-    if (finalMarkdown) {
-      renderMindmap(finalMarkdown);
-      saveMindmapToHistory(finalTopic || mindmapTopic, finalMarkdown);
-
-      currentMindmapTitle = finalTopic || mindmapTopic;
-
-      if (window.dataLayer) {
-        window.dataLayer.push({
-          event: 'mindmap_generated',
-          mindmap_type: isRegenerate ? 'regenerated' : 'new',
-        });
-      }
-    } else {
-      throw new Error('Failed to process mindmap markdown');
-    }
-
+    // UI Cleanup
     if (loadingElem) loadingElem.style.display = 'none';
-
     const buttonContainer = document.getElementById('button-container');
     if (buttonContainer) buttonContainer.style.display = 'flex';
 
     if (isRegenerate) {
-      const regenerateBtn = document.getElementById('regenerate-button');
-      if (regenerateBtn) regenerateBtn.classList.remove('rotating');
+      document.getElementById('regenerate-button')?.classList.remove('rotating');
     }
+
   } catch (error) {
-    console.error('Error generating the mindmap:', error);
-    showErrorPopup('An error occurred while generating the mindmap');
-
-    const loadingElem = document.getElementById('loading-animation');
-    if (loadingElem) loadingElem.style.display = 'none';
-
-    if (isRegenerate) {
-      const regenerateBtn = document.getElementById('regenerate-button');
-      if (regenerateBtn) regenerateBtn.classList.remove('rotating');
+    console.error('Error generating mindmap:', error);
+    // Passing error to your existing UI popup
+    if (typeof showErrorPopup === 'function') {
+        showErrorPopup('Error: ' + error.message);
+    } else {
+        alert('Error: ' + error.message);
     }
+    document.getElementById('loading-animation').style.display = 'none';
   }
 }
 

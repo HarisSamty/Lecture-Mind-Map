@@ -56,16 +56,70 @@ app.post('/transcribe', upload.single('audio'), async (req, res) => {
       .map(result => result.alternatives[0].transcript)
       .join('\n');
 
-    // Delete the uploaded file after processing
+    // Clean up the uploaded file
     fs.unlinkSync(filePath);
 
-    res.json({ transcription });
+    res.json({ transcription: transcription });
   } catch (error) {
     console.error('Error during transcription:', error);
-    res.status(500).json({ error: 'Failed to transcribe audio' });
+    res.status(500).send('Error during transcription');
   }
 });
 
+// --- NEW ENDPOINT: Generate Mind Map (Proxy) ---
+app.post('/api/generate-mindmap', express.json(), async (req, res) => {
+    const { prompt } = req.body;
+    if (!prompt) {
+        return res.status(400).json({ error: 'Prompt is required' });
+    }
+
+    const API_KEY = 'AIzaSyBb3fx68dd4V70szsUN63uoDBWCFr3MqDc';
+    const models = [
+        'gemini-2.5-flash',
+        'gemini-2.5-pro',
+        'gemini-2.0-flash',
+        'gemini-flash-latest',
+        'gemini-pro-latest'
+    ];
+
+    let lastError = null;
+
+    for (const model of models) {
+        try {
+            console.log(`Server attempting model: ${model}`);
+            const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`;
+            
+            const response = await fetch(geminiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }]
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                const errorMsg = errorData.error?.message || response.statusText;
+                console.warn(`Model ${model} failed on server: ${errorMsg}`);
+                lastError = new Error(errorMsg);
+                continue;
+            }
+
+            const data = await response.json();
+            return res.json(data); // Return successful response immediately
+
+        } catch (error) {
+            console.error(`Server error with model ${model}:`, error);
+            lastError = error;
+        }
+    }
+
+    res.status(500).json({ 
+        error: 'All models failed', 
+        details: lastError ? lastError.message : 'Unknown error' 
+    });
+});
+
 app.listen(port, () => {
-  console.log(`Speech-to-text server listening at http://localhost:${port}`);
+  console.log(`Server listening at http://localhost:${port}`);
 });
